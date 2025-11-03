@@ -7,13 +7,13 @@ import cache_game as gl # Import our game logic & AI brain as 'gl'
 # PART 1: PYGAME CONSTANTS AND SETUP
 # --------------------------------------------------------------------------------
 
-# --- Sizing Constants ---
+# --- Sizing Constants (UPDATED TO 7x7) ---
 SQUARE_SIZE = 80
-GRID_WIDTH = gl.GRID_SIZE
-GRID_HEIGHT = gl.GRID_SIZE
+GRID_WIDTH = gl.GRID_SIZE  # Now 7 (from cache_game.py)
+GRID_HEIGHT = gl.GRID_SIZE # Now 7 (from cache_game.py)
 
-WINDOW_WIDTH = GRID_WIDTH * SQUARE_SIZE
-WINDOW_HEIGHT = GRID_HEIGHT * SQUARE_SIZE + 60 # For the message panel
+WINDOW_WIDTH = GRID_WIDTH * SQUARE_SIZE   # 7 * 80 = 560 pixels
+WINDOW_HEIGHT = GRID_HEIGHT * SQUARE_SIZE + 60 # 560 + 60 = 620 pixels
 
 # --- Color Constants (RGB) ---
 COLOR_WHITE = (255, 255, 255)
@@ -29,7 +29,7 @@ COLOR_BUTTON_TEXT = (255, 255, 255)
 
 # --- Pygame System Initialization ---
 pygame.init()
-screen = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
+screen = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT)) # Window size is now 560x620
 pygame.display.set_caption(f"Cache Game (AI Project) - {GRID_WIDTH}x{GRID_HEIGHT}")
 clock = pygame.time.Clock()
 font_small = pygame.font.SysFont("Arial", 20)
@@ -37,8 +37,6 @@ font_large = pygame.font.SysFont("Arial", 40)
 font_message = pygame.font.SysFont("Arial", 22, bold=True)
 
 # --- IMAGE LOADING ---
-# Try to load the user's images ('player_png.png', 'ai_png.png').
-# If they fail, use 'R' (Runner) and 'C' (Chaser) as fallbacks.
 try:
     player_image = pygame.image.load('player_png.png') 
     player_image = pygame.transform.scale(player_image, (SQUARE_SIZE - 20, SQUARE_SIZE - 20))
@@ -129,10 +127,11 @@ def pygame_main_loop():
     
     
     # --- LOAD OR TRAIN AI BRAIN ---
+    # We now check for the 7x7 "guardian" brain file
     if not gl.load_brain():
         # If no brain file is found, show a "Training..." message
         screen.fill(COLOR_BACKGROUND)
-        draw_message("AI brain not found. Training AI... (This may take 1-2 min)", (255, 100, 0))
+        draw_message("AI brain (7x7) not found. Training AI... (This may take 2-3 min)", (255, 100, 0))
         pygame.display.update()
         
         # Run the training and save the new brain
