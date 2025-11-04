@@ -1,65 +1,83 @@
-# CENG 3511: Artificial Intelligence Midterm Project
-## AI "Catch Game" (Gridworld Chase)
+# CENG 3511: AI "Catch Game" (Unbeatable Guardian) 
 
-### Project Task 1: Define the Game 
+This project is an AI agent developed for the CENG 3511: Artificial Intelligence course. It features a "Guardian" AI that learns, through Reinforcement Learning, to play an "unbeatable" game of "Catch" against a human player.
 
-This project fulfills the requirement to "Design and Implement an AI Agent for a Game Environment" .
-
-The game is a 2-player, turn-based "chase" game on a 7x7 grid (Gridworld) .
-* **Player (Human):** The "Runner." The goal is to reach the "EXIT" square at (6,6) from the starting position (0,0).
-* **AI (Opponent):** The "Guardian." The AI's goal is to **prevent the Runner from reaching the exit,** thereby catching them. The AI starts on the Exit square at (6,6).
+* **Player (Human ):** The "Runner." Starts at `(0,0)` and tries to reach the "EXIT" at `(6,6)`.
+* **AI (Opponent ):** The "Guardian." Starts *on* the Exit at `(6,6)`. Its goal is to intercept the player.
 
 ---
 
-### Project Tasks 2 & 3: Design and Develop the AI 
+##  Methodology
 
-The methodology for this project is **"Option 1: Reinforcement Learning Agent"** , using the **Q-Learning** algorithm .
+This project implements **"Option 1: Reinforcement Learning Agent"** from the course brief.
 
-Development was done using **Python** and **Pygame** as recommended . The code is separated into two main files:
+### 1. Algorithm Choice: Q-Learning
+The AI uses the **Q-Learning** algorithm . This was chosen because it is a powerful, model-free algorithm ideal for a discrete environment like our 7x7 grid. It allows the AI to learn optimal behavior through trial-and-error (training).
 
-* `cache_game.py`: **(The Backend / AI Brain)**
-    * Defines all game rules (movement, win conditions).
-    * Contains the Q-Learning algorithm, Q-Table, and the Reward/Penalty system.
-    * Contains the AI's training simulation function (`train_ai()`).
+### 2. The Q-Table (The AI's Brain)
+The AI's "brain" is a Q-Table (`Q_table`), implemented as a Python dictionary. It maps `(state, action)` pairs to expected future rewards.
 
-* `main_pygame.py`: **(The Frontend / Visual Interface)**
-    * Contains all Pygame code for drawing and UI.
-    * Manages user input (Keyboard/Mouse).
-    * Loads the trained AI brain from `cache_game.py` and runs the game.
+* **State:** A tuple representing `(ai_position, human_position)`. This results in (49 * 49) = **2401** manageable states, which avoids the need for a complex Deep Q-Network (DQN) .
+* **Action:** The 5 possible moves: `['UP', 'DOWN', 'LEFT', 'RIGHT', 'STAY']`.
 
-* `ai_png.png` / `player_png.png`: Character sprites.
-* `.gitignore`: Ignores auto-generated files like `__pycache__` and `ai_brain_7x7_guardian.json`.
+### 3. The Q-Learning Update Rule
+The Q-Table is updated after every move during training using the Bellman Equation:
+
+$Q(s,a) = Q(s,a) + \alpha [r + \gamma \max_{a'} Q(s',a') - Q(s,a)]$
+
+Where the key parameters (defined in `cache_game.py`) are:
+* **\( \alpha \)** (Learning Rate): `0.1`
+* **\( \gamma \)** (Discount Factor): `0.95`
+* **\( r \)** (Reward): The reward received from the `calculate_reward()` function.
+
+### 4. Exploration vs. Exploitation
+The AI is trained using an **ε-greedy policy**.
+* Epsilon (ε) starts at `1.0` (100% exploration).
+* It "decays" (azalır) over 1,000,000 episodes to `0.01` (1% exploration).
+* This ensures the AI explores the environment thoroughly before mastering the optimal strategy.
+
+### 5. Implementation Details
+* **Language:** Python 
+* **Libraries:** Pygame , `json`, `time`, `random`
+* **Files:**
+    * `cache_game.py`: Contains the AI logic, Q-Learning algorithm, and training loop.
+    * `main_pygame.py`: Contains the Pygame visuals, game loop, and user input handling.
 
 ---
 
-### Project Task 4: Train/Test the AI 
+##  Training and Results
 
-The AI is trained via the `train_ai()` function by simulating **1,000,000 games (EPISODES)**. This training ensures the AI learns the "unbeatable" Guardian strategy.
+### Training
+The AI is trained by simulating **1,000,000 episodes** (games) via the `train_ai()` function. The trained "brain" is then saved to `ai_brain_7x7_guardian.json`.
 
-The trained "brain" is saved to `ai_brain_7x7_guardian.json`.
+### Results: The "Unbeatable Guardian" Strategy
+The AI's *only* motivation is to maximize its score, which is defined by this simple system:
+* **`REWARD_WIN = +200`**
+* **`REWARD_LOSE = -200`**
+* **`REWARD_MOVE = -1`**
+
+Through training, the AI learns that the *only* way to risk getting the `-200` (Lose) penalty is to move off the `(6,6)` Exit square. Therefore, the optimal (highest Q-value) strategy it learns is to use the **'STAY'** action and "guard" the Exit square.
+
+The `check_winner()` function is sequenced to check for a "catch" (`ai_pos == human_pos` == state['human_pos']:`]) *before* checking for an "exit" (`human_pos == EXIT_POS` == EXIT_POS:`]). This guarantees an **AI win** when the player moves onto the `(6,6)` square. The player can never win.
+
+
+## How to Run 
+
+**1. Install Pygame:**
+```bash
+pip install pygame
+```
+
+**2. Run the game:**
+```bash
+python main_pygame.py
+```
+
+**3. IMPORTANT (First-Time Run):**
+The program will detect that the `ai_brain_7x7_guardian.json` file is missing. The console will show `"[TRAINING STARTED]..."`...")`]. Please wait **2-3 minutes** while the AI is trained.
+
+**4. Subsequent Runs:**
+Once the "brain" file is created, the game will load the trained AI and start instantly.
 
 ---
-
-### Submission Guideline: Setup Instructions 
-
-Instructions required to run the project:
-
-**Requirements:**
-* Python 3.x
-* Pygame library
-
-**Steps:**
-
-1.  Install the required library (Pygame):
-    ```bash
-    pip install pygame
-    ```
-
-2.  Run the game:
-    ```bash
-    python main_pygame.py
-    ```
-
-3.  **IMPORTANT (First-Time Run):** The program will detect that the `ai_brain_7x7_guardian.json` file is missing. The console will show `"[TRAINING STARTED]..."`...")`]. Please wait **2-3 minutes** while the AI is trained.
-
-4.  **Subsequent Runs:** Once the "brain" file is created, the game will start instantly.
+📘 Developed by Ceren Doğanay as part of the CENG 3511: Artificial Intelligence course project .
