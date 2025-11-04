@@ -1,12 +1,10 @@
-# cache_game.py (7x7 "KUSURSUZ GARDİYAN" VERSİYONU)
-
 import random
 import json
 import os
 import time
 
 # --------------------------------------------------------------------------------
-# PART 1: GAME ENGINE (7x7 "UNBEATABLE" SETUP)
+# PART 1: GAME ENGINE 
 # --------------------------------------------------------------------------------
 
 # --- 1.1. Game Constants (7x7) ---
@@ -28,6 +26,7 @@ ACTION_NAMES = list(ACTIONS.keys())
 # --- UNBEATABLE STRATEGY (7x7) ---
 # AI starts *ON* the Exit square. It will learn that leaving this square
 # is the only way to lose, so it will "guard" it by staying put.
+
 START_POS_HUMAN = (0, 0) # Top-left
 EXIT_POS = (6, 6) # Exit (Bottom-right)
 START_POS_AI = (6, 6) # AI starts ON the Exit 
@@ -76,8 +75,6 @@ def check_winner(state):
 # --------------------------------------------------------------------------------
 # PART 2: AI BRAIN & TRAINING (Q-LEARNING ALGORITHM)
 # --------------------------------------------------------------------------------
-# This is the core "Artificial Intelligence" part of the project.
-# --------------------------------------------------------------------------------
 
 # --- 2.1. Q-Learning Hyperparameters ---
 LEARNING_RATE = 0.1
@@ -89,12 +86,11 @@ epsilon = 1.0
 MIN_EPSILON = 0.01
 EPSILON_DECAY = 0.999995 # Slower decay for more exploration
 
-# --- 2.2. Reward / Penalty System (THE FLAW IS FIXED) ---
+# --- 2.2. Reward / Penalty System  ---
 # The "get closer" / "get farther" rewards have been REMOVED.
-# This was the "kusur" (flaw) in the algorithm.
-# The AI's *only* motivation now is to avoid the -200 (Lose) penalty.
-REWARD_WIN = 200      # Big reward for catching the human.
-REWARD_LOSE = -200    # Big penalty if the human escapes.
+
+REWARD_WIN = 200      
+REWARD_LOSE = -200    
 REWARD_MOVE = -1      # Small penalty for every move (encourages efficiency).
 
 # --- 2.3. The AI "Brain" (Q-Table) ---
@@ -147,8 +143,6 @@ def calculate_reward(old_state, new_state, winner):
 
 # --------------------------------------------------------------------------------
 # PART 4: THE TRAINING LOOP
-# --------------------------------------------------------------------------------
-# This fulfills the "Train/Test the AI" task from the PDF.
 # --------------------------------------------------------------------------------
 
 def train_ai():
@@ -204,7 +198,7 @@ def train_ai():
         if epsilon > MIN_EPSILON:
             epsilon *= EPSILON_DECAY
             
-        if (episode + 1) % 100000 == 0: # Her 100,000'de bir rapor ver
+        if (episode + 1) % 100000 == 0: # Report every 100,000
             print(f"  ...Training {episode + 1}/{EPISODES} complete. (Epsilon: {epsilon:.4f})")
 
     end_time = time.time()
