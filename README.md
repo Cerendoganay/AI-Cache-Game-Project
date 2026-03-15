@@ -33,7 +33,7 @@ Where the key parameters (defined in `cache_game.py`) are:
 ### 4. Exploration vs. Exploitation
 The AI is trained using an **ε-greedy policy**.
 * Epsilon (ε) starts at `1.0` (100% exploration).
-* It "decays" (azalır) over 1,000,000 episodes to `0.01` (1% exploration).
+* It decays over 1,000,000 episodes to `0.01` (1% exploration).
 * This ensures the AI explores the environment thoroughly before mastering the optimal strategy.
 
 ### 5. Implementation Details
